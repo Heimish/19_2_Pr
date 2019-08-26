@@ -85,10 +85,10 @@ static void InitInstance(HINSTANCE hInstance, LPCTSTR lpCmdLine, int nCmdShow)
 	RegisterClassEx(&wcex);
 
 	DisplaySetting::Inst().SetSize(ScreenPoint(800, 600));
-	hMainWnd = CreateAppWindow(szTitle, className, false);
+	hMainWnd = CreateAppWindow(szTitle, className, DisplaySetting::Inst().GetSize().X, DisplaySetting::Inst().GetSize().Y, false);
 }
 
-static HWND CreateAppWindow(const TCHAR *title, const TCHAR *classname, bool fullscreen) 
+static HWND CreateAppWindow(const TCHAR *title, const TCHAR *classname, int width, int height, bool fullscreen) 
 {
 	RECT rect;
 	rect.left = 0;
