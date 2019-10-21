@@ -10,14 +10,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(CMakeDependentOption)
 set(MAIN_PROJECT_NAME SoftRenderer)
 
-project(${MAIN_PROJECT_NAME})
-
+option(BUILD_RUNTIME "Build Runtime library" OFF)
 option(BUILD_PLAYER "Build Player executable" OFF)
 
 if (NOT BUILD_PLAYER)
     message(FATAL_ERROR "no BUILD_PLAYER OPTION")
+else()
+	message(STATUS "BUILD_PLAYER option detected!")
 endif ()
 
+if (BUILD_RUNTIME)
+	message(STATUS "BUILD_RUNTIME option detected!")
+endif ()
+
+project(${MAIN_PROJECT_NAME})
+
+set(RUNTIME_MODULE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Source/Runtime)
 set(PLATFORM_WINDOWS TRUE)
 
 message(STATUS "Running from ${CMAKE_CURRENT_SOURCE_DIR}")
@@ -76,9 +84,16 @@ endforeach()
 # Sub projects
 ################################################################################
 
+if (BUILD_RUNTIME)
+    add_subdirectory(Source/Runtime/Math)
+    add_subdirectory(Source/Runtime/Renderer)
+    add_subdirectory(Source/Runtime/Engine)
+endif ()
+
 if (BUILD_PLAYER)
     add_subdirectory(Source/Player)
 endif ()
 
 set(CMAKE_SUPPRESS_REGENERATION true)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT SoftRendererPlayer)
+
