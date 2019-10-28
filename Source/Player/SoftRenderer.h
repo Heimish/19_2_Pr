@@ -1,6 +1,8 @@
 #pragma once
 
 #include "WindowsRSI.h"
+#include "InputManager.h"
+#include "Texture.h"
 
 class SoftRenderer
 {
@@ -22,15 +24,24 @@ public:
 public:
 	void SetRenderMode(RenderMode InRenderMode) { CurrentRenderMode = InRenderMode; }
 	RenderMode GetRenderMode() const { return CurrentRenderMode; }
-	void Initialize();
-	void Shutdown();
-	void Update();
-	void PreUpdate();
-	void PostUpdate();
+	InputManager& GetInputManager() { return InputManager; }
+
 	float GetFrameFPS() const { return FrameFPS; }
 	float GetAverageFPS() const { return AverageFPS; }
-	float GetElapsedTime() const { return ElapsedTime; }
-	int GetFrameCount() const { return FrameCount; }
+
+	void Initialize();
+	void Shutdown();
+	void PreUpdate();
+	void Update();
+	void PostUpdate();
+
+private:
+	SoftRenderer() { }
+	~SoftRenderer() { Shutdown(); }
+
+	RenderMode CurrentRenderMode = RenderMode::TWO;
+
+	RenderingSoftwareInterface* RSI = nullptr;
 
 	// Performace counter
 	LONGLONG StartTimeStamp = 0;
@@ -41,16 +52,7 @@ public:
 	float ElapsedTime = 0.f;
 	float AverageFPS = 0.f;
 	float FrameFPS = 0.f;
-	double MilliSecFrequency = 0;
-	double FrameMilliSec = 0;
-	float FrameSec = 0;
-	LONGLONG StartFrameSec = 0;
 
-private:
-	SoftRenderer() { }
-	~SoftRenderer() { Shutdown(); }
-
-	RenderMode CurrentRenderMode = RenderMode::TWO;
-
-	RenderingSoftwareInterface* RSI = nullptr;
+	InputManager InputManager;
+	Texture MainTexture;
 };

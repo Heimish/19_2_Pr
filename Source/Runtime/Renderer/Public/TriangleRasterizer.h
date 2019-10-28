@@ -25,6 +25,17 @@ public:
 		return true;	
 	}
 
+	FORCEINLINE Vector2 GetUV(const Vector2& InScreenPosition) const
+	{
+		if (!HasUV())
+		{
+			return Vector2::Zero;
+		}
+		Vector2 st = GetBaryCentricCoord(InScreenPosition);
+		float oneMinusST = 1 - st.X - st.Y;
+		return VertexBuffer[0].UV * oneMinusST + VertexBuffer[1].UV * st.X + VertexBuffer[2].UV * st.Y;
+	}
+
 	FORCEINLINE LinearColor GetColor(const Vector2& InScreenPosition) const
 	{
 		if (!HasColor())

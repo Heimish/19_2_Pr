@@ -1,99 +1,136 @@
 #pragma once
 
-#include "Vector2.h"
+#include "Vector3.h"
 
-struct Matrix2x2
+struct Matrix3x3
 {
 public:
-	Matrix2x2();
-	Matrix2x2(const Vector2& InCol0, const Vector2& InCol1);
-	Matrix2x2(float In00, float In01, float In10, float In11);
+	Matrix3x3();
+	Matrix3x3(const Vector3& InCol0, const Vector3& InCol1, const Vector3& InCol2);
+	Matrix3x3(float In00, float In01, float In02, float In10, float In11, float In12, float In20, float In21, float In22);
 
 	FORCEINLINE void SetIdentity();
-	FORCEINLINE void SetRotation(float InRadian);
-	FORCEINLINE void SetScale(Vector2 InScale);
-	FORCEINLINE Matrix2x2 Tranpose() const;
+	FORCEINLINE void SetRotationXY(float InRadian);
+	FORCEINLINE void SetScaleXY(const Vector2& InScale);
+	FORCEINLINE void SetTranslationXY(const Vector2& InTranslation);
+	FORCEINLINE void SetScale(const Vector3& InScale);
+	FORCEINLINE Matrix3x3 Tranpose() const;
 
-	FORCEINLINE const Vector2& operator[](int InIndex) const;
-	FORCEINLINE Vector2& operator[](int InIndex);
+	FORCEINLINE const Vector3& operator[](int InIndex) const;
+	FORCEINLINE Vector3& operator[](int InIndex);
 
-	FORCEINLINE Matrix2x2 operator*(const Matrix2x2& InM) const;
+	FORCEINLINE Matrix3x3 operator*(const Matrix3x3& InM) const;
 
-	FORCEINLINE Vector2 operator*(const Vector2& InV) const;
-	FORCEINLINE friend Vector2 operator*=(Vector2& InV, const Matrix2x2& InM)
+	FORCEINLINE Vector3 operator*(const Vector3& InV) const;
+	FORCEINLINE friend Vector3 operator*=(Vector3& InV, const Matrix3x3& InM)
 	{
 		InV = InM * InV;
 		return InV;
 	}
 
-	FORCEINLINE Matrix2x2 operator*(float InS) const;
+	FORCEINLINE Vector2 operator*(const Vector2& InV) const;
+	FORCEINLINE friend Vector2 operator*=(Vector2& InV, const Matrix3x3& InM)
+	{
+		InV = InM * InV;
+		return InV;
+	}
 
-	static const Matrix2x2 Identity;
+	FORCEINLINE Matrix3x3 operator*(float InS) const;
 
 private:
-	Vector2 Cols[2];
+	Vector3 Cols[3];
 };
 
-FORCEINLINE void Matrix2x2::SetIdentity()
+FORCEINLINE void Matrix3x3::SetIdentity()
 {
-	*this = Matrix2x2::Identity;
+	Cols[0] = Vector3::UnitX;
+	Cols[1] = Vector3::UnitY;
+	Cols[2] = Vector3::UnitZ;
 }
 
-FORCEINLINE void Matrix2x2::SetRotation(float InRadian)
+FORCEINLINE void Matrix3x3::SetRotationXY(float InRadian)
 {
-	Cols[0] = Vector2(cosf(InRadian), sinf(InRadian));
-	Cols[1] = Vector2(-sinf(InRadian), cosf(InRadian));
+	Cols[0] = Vector3(cosf(InRadian), sinf(InRadian), 0.f);
+	Cols[1] = Vector3(-sinf(InRadian), cosf(InRadian), 0.f);
+	Cols[2] = Vector3::UnitZ;
 }
 
-FORCEINLINE void Matrix2x2::SetScale(Vector2 InScale)
+FORCEINLINE void Matrix3x3::SetScaleXY(const Vector2& InScale)
 {
-	Cols[0] = Vector2::UnitX * InScale.X;
-	Cols[1] = Vector2::UnitY * InScale.Y;
+	Cols[0] = Vector3::UnitX * InScale.X;
+	Cols[1] = Vector3::UnitY * InScale.Y;
+	Cols[2] = Vector3::UnitZ;
 }
 
-FORCEINLINE Matrix2x2 Matrix2x2::Tranpose() const
+FORCEINLINE void Matrix3x3::SetTranslationXY(const Vector2& InTranslation)
 {
-	return Matrix2x2(
-		Vector2(Cols[0].X, Cols[1].X),
-		Vector2(Cols[0].Y, Cols[1].Y)
+	Cols[0] = Vector3::UnitX;
+	Cols[1] = Vector3::UnitY;
+	Cols[2] = Vector3(InTranslation.X, InTranslation.Y, 1.f);
+}
+
+FORCEINLINE void Matrix3x3::SetScale(const Vector3& InScale)
+{
+	Cols[0] = Vector3::UnitX * InScale.X;
+	Cols[1] = Vector3::UnitY * InScale.Y;
+	Cols[2] = Vector3::UnitZ * InScale.Z;
+}
+
+FORCEINLINE Matrix3x3 Matrix3x3::Tranpose() const
+{
+	return Matrix3x3(
+		Vector3(Cols[0].X, Cols[1].X, Cols[2].X),
+		Vector3(Cols[0].Y, Cols[1].Y, Cols[2].Y),
+		Vector3(Cols[0].Z, Cols[1].Z, Cols[2].Z)
 	);
 }
 
-
-FORCEINLINE const Vector2& Matrix2x2::operator[](int InIndex) const
+FORCEINLINE const Vector3& Matrix3x3::operator[](int InIndex) const
 {
 	return Cols[InIndex];
 }
 
-FORCEINLINE Vector2& Matrix2x2::operator[](int InIndex)
+FORCEINLINE Vector3& Matrix3x3::operator[](int InIndex)
 {
 	return Cols[InIndex];
 }
 
 
-
-FORCEINLINE Matrix2x2 Matrix2x2::operator*(const Matrix2x2 &InM) const
+FORCEINLINE Matrix3x3 Matrix3x3::operator*(const Matrix3x3 &InM) const
 {
-	Matrix2x2 tpMat = Tranpose();
-	return Matrix2x2(
-		Vector2(tpMat[0].Dot(InM[0]), tpMat[1].Dot(InM[0])),
-		Vector2(tpMat[0].Dot(InM[1]), tpMat[1].Dot(InM[1]))
+	Matrix3x3 tpMat = Tranpose();
+	return Matrix3x3(
+		Vector3(tpMat[0].Dot(InM[0]), tpMat[1].Dot(InM[0]), tpMat[2].Dot(InM[0])),
+		Vector3(tpMat[0].Dot(InM[1]), tpMat[1].Dot(InM[1]), tpMat[2].Dot(InM[1])),
+		Vector3(tpMat[0].Dot(InM[2]), tpMat[1].Dot(InM[2]), tpMat[2].Dot(InM[2]))
 	);
+
 }
 
-FORCEINLINE Vector2 Matrix2x2::operator*(const Vector2& InV) const
+
+FORCEINLINE Vector3 Matrix3x3::operator*(const Vector3& InV) const
 {
-	Matrix2x2 tpMat = Tranpose();
-	return Vector2(
+	Matrix3x3 tpMat = Tranpose();
+	return Vector3(
 		tpMat[0].Dot(InV),
-		tpMat[1].Dot(InV)
+		tpMat[1].Dot(InV),
+		tpMat[2].Dot(InV)
 	);
 }
 
-FORCEINLINE Matrix2x2 Matrix2x2::operator*(float InS) const
+FORCEINLINE Vector2 Matrix3x3::operator*(const Vector2& InV) const
 {
-	return Matrix2x2(
+	Vector3 V3(InV);
+	V3 *= *this;
+
+	return V3.ToVector2();
+}
+
+FORCEINLINE Matrix3x3 Matrix3x3::operator*(float InS) const
+{
+	return Matrix3x3(
 		Cols[0] * InS,
-		Cols[1] * InS
+		Cols[1] * InS,
+		Cols[2] * InS
 	);
 }

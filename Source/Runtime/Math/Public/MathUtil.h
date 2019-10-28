@@ -31,7 +31,6 @@ struct Math
 		return TruncToInt(ceilf(InFloat));
 	}
 
-
 	template<class T>
 	static constexpr FORCEINLINE T Square(const T InNum)
 	{

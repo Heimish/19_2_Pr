@@ -57,8 +57,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCm
 	UpdateMenuStatus();
 
 	double prevShowTitleSec = 0;
-	float frameFPS = SoftRenderer::Inst().GetFrameFPS();
-	float averageFPS = SoftRenderer::Inst().GetAverageFPS();
 
 	while (1)
 	{
@@ -213,9 +211,19 @@ static bool LoopInstance()
 		}
 	}
 
-	// Set Update Logic Here.
+	// Performance Profiling Start
 	SoftRenderer::Inst().PreUpdate();
+
+	// Input State
+	SoftRenderer::Inst().GetInputManager().IsLeft = GetAsyncKeyState(VK_LEFT);
+	SoftRenderer::Inst().GetInputManager().IsRight = GetAsyncKeyState(VK_RIGHT);
+	SoftRenderer::Inst().GetInputManager().IsDown = GetAsyncKeyState(VK_DOWN);
+	SoftRenderer::Inst().GetInputManager().IsUp = GetAsyncKeyState(VK_UP);
+
+	// Set Update Logic Here.
 	SoftRenderer::Inst().Update();
+
+	// Performance Profiling End
 	SoftRenderer::Inst().PostUpdate();
 
 	return true;

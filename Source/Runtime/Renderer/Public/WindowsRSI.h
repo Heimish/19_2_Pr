@@ -23,14 +23,24 @@ public:
 	virtual void EndFrame() override;
 	virtual void DrawScreenPoint(const ScreenPoint& InScreenPos, const LinearColor& InColor) override;
 
+	virtual int SetTexture(RSITexture& InRSITexture) override;
 	virtual void SetVertexBuffer(VertexData* InVertexData) override;
 	virtual void SetIndexBuffer(const int* InIndexData) override;
-	//virtual void DrawTopFlatTriangle(VertexData * tvs, bool DrawLastLine) override;
 	virtual void DrawPrimitive(UINT InVertexSize, UINT InIndexSize) override;
+
+	virtual void DrawLine(const Vector2& InStartPos, const Vector2& InEndPos, const LinearColor& InColor);
 	virtual void DrawVerticalLine(int InX, const LinearColor& InColor) override;
 	virtual void DrawHorizontalLine(int InY, const LinearColor& InColor) override;
+
+	void DrawTopFlatTriangle(VertexData* tvs, bool DrawLastLine = true);
+	void DrawBottomFlatTriangle(VertexData* tvs);
+
+	LinearColor GetTextureSample(const Vector2& InUV);
+
 
 private:
 	VertexData* VertexBuffer;
 	const int* IndexBuffer;
+	bool HasTexture = false;
+	RSITexture MainTexture;
 };

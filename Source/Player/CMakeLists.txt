@@ -73,6 +73,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	PREFIX ""
 	OUTPUT_NAME ${PROJECT_NAME}
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/Output/Win64/Binary
+	VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Resource
 	)
 	
 ################################################################################
